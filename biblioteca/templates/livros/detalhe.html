@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ livro.titulo }}</h2>
+  <p><strong>Gênero:</strong> {{ livro.genero }}</p>
+  <p><strong>Autores:</strong> {{ livro.autores.all|join:", " }}</p>
+  {% if livro.capa %}
+    <img src="{{ livro.capa.url }}" class="img-fluid mb-3" alt="Capa do livro">
+  {% endif %}
+  <p><strong>Quantidade disponível:</strong> {{ livro.quantidade }}</p>
+
+  {% if user.is_authenticated %}
+    <form method="post" action="{% url 'reserva-criar' livro.pk %}" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-warning">Reservar</button>
+    </form>
+    <form method="post" action="{% url 'emprestimo-criar' livro.pk %}" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Emprestar</button>
+    </form>
+  {% endif %}
+
+  <div class="mt-3">
+    <a href="{% url 'livro-lista' %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+  </div>
+</div>
+{% endblock %}
