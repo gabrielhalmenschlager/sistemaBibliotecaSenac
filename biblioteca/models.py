@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import ProtectedError
+from django.db import models, transaction
+from django.db.models import F
 
 # ----------------------------
 # Usuário
@@ -75,32 +77,64 @@ class Reserva(models.Model):
     data_reserva = models.DateTimeField(auto_now_add=True)
     ativa = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f"{self.usuario} reservou {self.livro}"
-
+    # ---------------- Validações ----------------
     def clean(self):
+        """Roda só quando a reserva ficará ATIVA."""
+        if not self.ativa:
+            return                      # nada a validar
+
         if not self.livro.is_disponivel():
             raise ValidationError("Livro indisponível para reserva.")
-        
-        reservas_ativas = Reserva.objects.filter(usuario=self.usuario, ativa=True)
-        if reservas_ativas.count() >= 3:
+
+        if Reserva.objects.filter(usuario=self.usuario, ativa=True).count() >= 3:
             raise ValidationError("Você já possui 3 reservas ativas.")
-        
-        if Reserva.objects.filter(usuario=self.usuario, livro=self.livro, ativa=True).exists():
+
+        if Reserva.objects.filter(
+            usuario=self.usuario, livro=self.livro, ativa=True
+        ).exclude(pk=self.pk).exists():
             raise ValidationError("Você já reservou esse livro.")
 
+    # ---------------- Persistência ----------------
     def save(self, *args, **kwargs):
-        self.clean()  # chama validações manuais
-        super().save(*args, **kwargs)
-        self.livro.quantidade -= 1
-        self.livro.save()
-
-    def cancelar(self):
+        # Valida apenas se continuará ativa
         if self.ativa:
-            self.ativa = False
-            self.save()
-            self.livro.quantidade += 1
-            self.livro.save()
+            self.clean()
+
+        criando = self._state.adding
+        ativa_antes = None
+        if not criando:
+            ativa_antes = Reserva.objects.only("ativa").get(pk=self.pk).ativa
+
+        super().save(*args, **kwargs)
+
+        # Ajusta estoque quando necessário
+        if criando and self.ativa:
+            Livro.objects.filter(pk=self.livro_id).update(
+                quantidade=F("quantidade") - 1
+            )
+        elif ativa_antes and not self.ativa:
+            Livro.objects.filter(pk=self.livro_id).update(
+                quantidade=F("quantidade") + 1
+            )
+
+    # ---------------- Cancelamento ----------------
+    def cancelar(self):
+        """
+        Cancela a reserva sem passar por clean()/save().
+        1. devolve um exemplar ao estoque
+        2. marca a reserva como inativa
+        """
+        if not self.ativa:
+            return                      # já cancelada
+
+        with transaction.atomic():
+            Livro.objects.filter(pk=self.livro_id).update(
+                quantidade=F("quantidade") + 1
+            )
+            Reserva.objects.filter(pk=self.pk, ativa=True).update(ativa=False)
+
+        # Atualiza o objeto em memória (opcional)
+        self.refresh_from_db(fields=["ativa"])
 
 # ----------------------------
 # Empréstimo

@@ -87,11 +87,15 @@ class ReservaListView(LoginRequiredMixin, generic.ListView):
 
 class ReservaCancelView(LoginRequiredMixin, generic.View):
     def post(self, request, pk):
-        reserva = get_object_or_404(Reserva, pk=pk, usuario=request.user, ativa=True)
+        reserva = get_object_or_404(
+            Reserva, pk=pk, usuario=request.user, ativa=True
+        )
         reserva.cancelar()
-        messages.success(request, f'Reserva do livro "{reserva.livro.titulo}" cancelada.')
+        messages.success(
+            request,
+            f'Reserva do livro “{reserva.livro.titulo}” cancelada com sucesso.'
+        )
         return redirect('reserva-lista')
-
 
 class EmprestimoListView(LoginRequiredMixin, generic.ListView):
     model = Emprestimo

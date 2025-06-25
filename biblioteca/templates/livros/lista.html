@@ -1,10 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-  <h2>Livros</h2>
-  <form method="get" class="mb-3">
-    <input type="text" name="q" class="form-control" placeholder="Buscar livros...">
-  </form>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-10">
+        <div class="card bg-dark text-white shadow-lg border-0 rounded-4">
+            <div class="card-header bg-secondary text-white rounded-top-4 py-3">
+                <h4 class="mb-0 d-flex align-items-center">
+                    <i class="bi bi-journal-bookmark-fill me-2 fs-4"></i> Livros
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-0">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control rounded-start-pill" placeholder="Buscar livros..." value="{{ request.GET.q }}">
+                        <button type="submit" class="btn btn-outline-light rounded-end-pill">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <div class="row mt-5">
     {% for livro in livros %}
       <div class="col-md-3 mb-4">
@@ -21,6 +39,7 @@
       </div>
     {% endfor %}
   </div>
+
   {% if is_paginated %}
     <nav>
       <ul class="pagination">
