@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <title>{% block title %}Sistema de Biblioteca{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Ícones Bootstrap (para o ícone de logout) -->
+    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Estilos personalizados -->
     <style>
         body {
             margin: 0;
-            padding-left: 250px; /* espaço para sidebar */
+            padding-left: 250px;
         }
         .sidebar {
             position: fixed;
@@ -25,7 +25,7 @@
             height: 100vh;
             width: 250px;
             padding-top: 1rem;
-            background-color: #212529; /* bg-dark */
+            background-color: #212529;
             color: white;
             overflow-y: auto;
             justify-content: center;
@@ -49,8 +49,6 @@
         .sidebar .navbar-brand img {
             max-width: 180px;
             height: auto;
-            justify-content: center;
-            align-items: center;
         }
         main.container {
             padding-top: 1rem;
@@ -61,29 +59,47 @@
     <!-- Sidebar -->
     <nav class="sidebar d-flex flex-column">
         <a class="navbar-brand" href="{% url 'livro-lista' %}">
-            <img src="/static/images/logoTeste3.png" alt="Logo" style="max-width: 200px; height: auto;">
+            <img src="{% static 'images/logoTeste3.png' %}" alt="Logo" style="max-width: 200px; height: auto;">
         </a>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'livro-lista' %}">Livros</a>
+                <a class="nav-link" href="{% url 'livro-lista' %}">
+                    <i class="bi bi-book me-2"></i> Livros
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'reserva-lista' %}">Reservas</a>
+                <a class="nav-link" href="{% url 'reserva-lista' %}">
+                    <i class="bi bi-bookmark-star me-2"></i> Reservas
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'emprestimo-lista' %}">Empréstimos</a>
+                <a class="nav-link" href="{% url 'emprestimo-lista' %}">
+                    <i class="bi bi-arrow-down-up me-2"></i> Empréstimos
+                </a>
             </li>
 
             {% if user.is_authenticated %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Cadastrar
+                    <i class="bi bi-pencil-square me-2"></i> Cadastrar
                 </a>
                 <ul class="dropdown-menu bg-dark" aria-labelledby="cadastroDropdown">
-                    <li><a class="dropdown-item" href="{% url 'livro-criar' %}">Novo Livro</a></li>
-                    <li><a class="dropdown-item" href="{% url 'reserva-lista' %}">Nova Reserva</a></li>
-                    <li><a class="dropdown-item" href="{% url 'emprestimo-lista' %}">Novo Empréstimo</a></li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'livro-criar' %}">
+                            <i class="bi bi-book-plus me-2"></i> Novo Livro
+                        </a>
+                    </li>
                 </ul>
+            </li>
+
+            <!-- Botão de sair acima do separador e em vermelho -->
+            <li class="nav-item mt-3 px-3">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link text-danger p-0">
+                        <i class="bi bi-box-arrow-right me-2"></i> Sair
+                    </button>
+                </form>
             </li>
             {% endif %}
         </ul>
@@ -93,19 +109,15 @@
         <ul class="nav flex-column px-3">
             {% if user.is_authenticated %}
                 <li class="nav-item mb-2">
-                    <span class="nav-link disabled">Olá, {{ user.username }}!</span>
-                </li>
-                <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link nav-link p-0" style="color: rgba(255,255,255,0.85);">
-                            <i class="bi bi-box-arrow-right"></i> Sair
-                        </button>
-                    </form>
+                    <span class="nav-link disabled">
+                        <i class="bi bi-person-circle me-2"></i> Olá, {{ user.username }}!
+                    </span>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Entrar</a>
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Entrar
+                    </a>
                 </li>
             {% endif %}
         </ul>
