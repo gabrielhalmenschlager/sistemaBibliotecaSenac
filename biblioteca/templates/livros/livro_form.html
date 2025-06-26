@@ -23,13 +23,16 @@
 
                         {% for field in form %}
                             <div class="mb-4">
-                                <label for="{{ field.id_for_label }}" class="form-label text-light fw-semibold">
+                                <label for="{{ field.id_for_label }}" class="form-label text-light fw-semibold mb-2">
                                     {{ field.label }}
                                 </label>
-                                {{ field }}
+
+                                <div class="form-control bg-dark text-white border border-secondary rounded-3 px-3 py-2">
+                                    {{ field }}
+                                </div>
 
                                 {% if field.help_text %}
-                                    <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                    <div class="form-text text-muted small mt-1">{{ field.help_text }}</div>
                                 {% endif %}
 
                                 {% if field.errors %}
