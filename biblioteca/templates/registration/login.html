@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card bg-dark text-white border-0 shadow-lg rounded-4">
-                <div class="card-header bg-gradient bg-primary text-white rounded-top-4 py-3">
+                <div class="card-header bg-secondary bg-primary text-white rounded-top-4 py-3">
                     <h4 class="mb-0 d-flex align-items-center">
                         <i class="bi bi-box-arrow-in-right me-2 fs-4"></i> Entrar no Sistema
                     </h4>
@@ -24,10 +24,12 @@
 
                         {% for field in form %}
                             <div class="mb-4">
-                                <label for="{{ field.id_for_label }}" class="form-label text-light fw-semibold">
+                                <label for="{{ field.id_for_label }}" class="form-label text-light fw-semibold mb-2">
                                     {{ field.label }}
                                 </label>
-                                {{ field }}
+                                <div class="form-control bg-dark text-white border border-secondary rounded-3 px-3 py-2">
+                                    {{ field }}
+                                </div>
                                 
                                 {% if field.errors %}
                                     <div class="text-danger small mt-1">

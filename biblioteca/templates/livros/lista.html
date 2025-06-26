@@ -1,57 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-10">
-        <div class="card bg-dark text-white shadow-lg border-0 rounded-4">
-            <div class="card-header bg-secondary text-white rounded-top-4 py-3">
-                <h4 class="mb-0 d-flex align-items-center">
-                    <i class="bi bi-journal-bookmark-fill me-2 fs-4"></i> Livros
-                </h4>
-            </div>
-            <div class="card-body">
-                <form method="get" class="mb-0">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control rounded-start-pill" placeholder="Buscar livros..." value="{{ request.GET.q }}">
-                        <button type="submit" class="btn btn-outline-light rounded-end-pill">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
+<div class="container py-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10 col-lg-8">
+            <div class="card bg-dark text-white shadow-lg border-0 rounded-4">
+                <div class="card-header bg-secondary text-white rounded-top-4 py-3">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-journal-bookmark-fill me-2 fs-4"></i> Livros
+                    </h4>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <form method="get" class="mb-0">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control rounded-start-pill" placeholder="Buscar livros..." value="{{ request.GET.q }}">
+                            <button type="submit" class="btn btn-outline-light rounded-end-pill">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-  </div>
 
-  <div class="row mt-5">
-    {% for livro in livros %}
-      <div class="col-md-3 mb-4">
-        <div class="card h-100">
-          {% if livro.capa %}
-            <img src="{{ livro.capa.url }}" class="card-img-top" alt="Capa">
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">{{ livro.titulo }}</h5>
-            <p class="card-text">{{ livro.genero }}</p>
-            <a href="{% url 'livro-detalhe' livro.pk %}" class="btn btn-primary">Detalhes</a>
-          </div>
+    <div class="row mb-5 mt-5">
+        {% for livro in livros %}
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 bg-secondary bg-opacity-25 text-white">
+                {% if livro.capa %}
+                <img src="{{ livro.capa.url }}" class="card-img-top rounded-top-4" alt="Capa do livro">
+                {% endif %}
+                <div class="card-body px-3 py-3">
+                    <h5 class="card-title fw-bold">{{ livro.titulo }}</h5>
+                    <p class="card-text mb-1"><i class="bi bi-bookmark me-1"></i> {{ livro.genero }}</p>
+                    <a href="{% url 'livro-detalhe' livro.pk %}" class="btn btn-outline-light rounded-pill mt-3 w-100">
+                        <i class="bi bi-info-circle me-1"></i> Detalhes
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+        {% empty %}
+        <div class="col-12 text-center text-white">
+            <p class="fs-5">Nenhum livro encontrado.</p>
+        </div>
+        {% endfor %}
+    </div>
 
-  {% if is_paginated %}
-    <nav>
-      <ul class="pagination">
-        {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
-        {% endif %}
-        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
-        {% if page_obj.has_next %}
-          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
-        {% endif %}
-      </ul>
-    </nav>
-  {% endif %}
+    {% if is_paginated %}
+    <div class="row mt-4">
+        <div class="col">
+            <nav class="d-flex justify-content-center">
+                <ul class="pagination pagination-dark">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark text-white border-secondary" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link bg-secondary border-secondary text-white">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark text-white border-secondary" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
