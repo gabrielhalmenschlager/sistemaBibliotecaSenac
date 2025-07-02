@@ -30,9 +30,13 @@ class Autor(models.Model):
     def __str__(self):
         return self.nome
 
+    # → usa o novo related_name
     def delete(self, *args, **kwargs):
-        if self.livro_set.exists():
-            raise ProtectedError("Não é possível excluir um autor associado a um livro.", self)
+        if self.livros.exists():                      # <‑‑ aqui
+            raise ProtectedError(
+                "Não é possível excluir um autor associado a um livro.",
+                self,
+            )
         super().delete(*args, **kwargs)
 
 # ----------------------------
@@ -49,7 +53,7 @@ class Livro(models.Model):
     titulo = models.CharField(max_length=200, unique=True)
     genero = models.CharField(max_length=20, choices=GENEROS)
     quantidade = models.PositiveIntegerField(default=1)
-    autores = models.ManyToManyField(Autor)
+    autores = models.ManyToManyField(Autor, related_name='livros')  # <-- aqui
     capa = models.ImageField(upload_to='capas/', blank=True, null=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
 
@@ -67,7 +71,7 @@ class Livro(models.Model):
                 raise ValidationError("Formato da capa inválido. Use JPG, PNG ou GIF.")
             if self.capa.size > 5 * 1024 * 1024:
                 raise ValidationError("A imagem da capa deve ter no máximo 5MB.")
-
+            
 # ----------------------------
 # Reserva
 # ----------------------------

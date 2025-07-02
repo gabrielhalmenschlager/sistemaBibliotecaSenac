@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10 col-lg-8">
+            <div class="card bg-dark text-white shadow-lg border-0 rounded-4">
+                <div class="card-header bg-secondary text-white rounded-top-4 py-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-people-fill me-2 fs-4"></i> Autores
+                    </h4>
+                    {% if user.is_authenticated and user.tipo == 'aluno' %}
+                    <a href="{% url 'autor-criar' %}" class="btn btn-success btn-sm rounded-pill px-3 py-2">
+                        <i class="bi bi-plus-lg me-1"></i> Novo Autor
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 mt-3">
+        {% for autor in autores %}
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 bg-secondary bg-opacity-25 text-white">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">{{ autor.nome }}</h5>
+                    <p class="card-text text-white-50 mb-3">
+                        {{ autor.qtd_livros }} livro{{ autor.qtd_livros|pluralize }}
+                    </p>
+                    <a href="{% url 'autor-detalhe' autor.pk %}" class="btn btn-outline-light rounded-pill mt-auto">
+                        <i class="bi bi-book me-1"></i> Ver livros
+                    </a>
+
+                    {% if user.is_authenticated and user.tipo == 'admin' %}
+                    <div class="mt-3 d-flex gap-2 justify-content-center">
+                        <a href="{% url 'autor-editar' autor.pk %}" class="btn btn-primary btn-sm rounded-pill px-3 py-1">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </a>
+                        <a href="{% url 'autor-excluir' autor.pk %}" class="btn btn-danger btn-sm rounded-pill px-3 py-1">
+                            <i class="bi bi-trash-fill"></i> Excluir
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-white">
+            <p class="fs-5">Nenhum autor cadastrado.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="row mt-4">
+        <div class="col">
+            <nav class="d-flex justify-content-center">
+                <ul class="pagination pagination-dark">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark text-white border-secondary" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link bg-secondary border-secondary text-white">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-dark text-white border-secondary" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
