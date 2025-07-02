@@ -5,8 +5,11 @@ from django.contrib import messages
 from django.db.models import Q
 
 from biblioteca.models import Livro, Autor, Reserva, Emprestimo
-from .forms import LivroForm
+from .forms import LivroForm, AutorForm
 
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.db.models import Count, Prefetch
 
 class LivroCreateView(generic.View):  # removi LoginRequiredMixin para deixar aberto a todos
     def get(self, request):
@@ -125,3 +128,69 @@ class EmprestimoDevolverView(LoginRequiredMixin, generic.View):
         emprestimo.devolver()
         messages.success(request, f'Livro "{emprestimo.livro.titulo}" devolvido com sucesso!')
         return redirect('emprestimo-lista')
+
+# ----------------------------
+# Permissão: apenas admins
+# ----------------------------
+class SomenteAdminMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.tipo == 'aluno'
+
+
+# ----------------------------
+# Autores - Visualização
+# ----------------------------
+class AutorListView(generic.ListView):
+    model = Autor
+    template_name = 'autores/lista.html'  # caminho relativo dentro da pasta templates
+    context_object_name = 'autores'
+    paginate_by = 12
+
+    def get_queryset(self):
+        return (
+            Autor.objects.all()
+            .annotate(qtd_livros=Count('livros'))
+            .order_by('nome')
+        )
+
+
+
+class AutorDetailView(generic.DetailView):
+    model = Autor
+    template_name = 'autores/detalhe.html'  # Ajustado para seu caminho
+    context_object_name = 'autor'
+
+    def get_queryset(self):
+        return Autor.objects.prefetch_related(
+            Prefetch('livros', queryset=Livro.objects.all())
+        )
+
+# ----------------------------
+# Autores - CRUD (admin apenas)
+# ----------------------------
+class AutorCreateView(SomenteAdminMixin, generic.CreateView):
+    model = Autor
+    form_class = AutorForm
+    template_name = 'autores/form.html'
+    success_url = reverse_lazy('autor-lista')
+
+
+class AutorUpdateView(SomenteAdminMixin, generic.UpdateView):
+    model = Autor
+    form_class = AutorForm
+    template_name = 'autores/form.html'
+    success_url = reverse_lazy('autor-lista')
+
+
+class AutorDeleteView(SomenteAdminMixin, generic.DeleteView):
+    model = Autor
+    template_name = 'autores/confirmar_exclusao.html'
+    success_url = reverse_lazy('autor-lista')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            return super().delete(request, *args, **kwargs)
+        except Exception as e:
+            messages.error(request, f'Erro ao excluir: {str(e)}')
+            return redirect('autor-lista')

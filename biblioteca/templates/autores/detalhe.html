@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Autor - {{ autor.nome }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card bg-dark text-white border-0 shadow-lg rounded-4">
+                <div class="card-header bg-secondary text-white rounded-top-4 py-3">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-person me-2 fs-4"></i> Detalhes do Autor
+                    </h4>
+                </div>
+                <div class="card-body px-4 py-4">
+                    <h2 class="mb-3">{{ autor.nome }}</h2>
+
+                    {% if autor.biografia %}
+                        <h5>Biografia</h5>
+                        <p class="mb-4">{{ autor.biografia|linebreaks }}</p>
+                    {% else %}
+                        <p class="fst-italic mb-4">Biografia não disponível.</p>
+                    {% endif %}
+
+                    <h5>Livros deste autor</h5>
+                    <ul class="list-group mb-4">
+                        {% for livro in autor.livros.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
+                                <a href="{% url 'livro-detalhe' livro.pk %}" class="text-decoration-none text-warning fw-semibold">
+                                    {{ livro.titulo }}
+                                </a>
+                                <span class="badge bg-secondary rounded-pill">{{ livro.genero }}</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item bg-dark text-white border-secondary fst-italic">
+                                Este autor ainda não tem livros cadastrados.
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <a href="{% url 'autor-lista' %}" class="btn btn-outline-light rounded-pill px-4 py-2">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar para a lista de autores
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
