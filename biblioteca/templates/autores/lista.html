@@ -15,11 +15,21 @@
                     </a>
                     {% endif %}
                 </div>
+                <div class="card-body px-4 py-3">
+                    <form method="get" class="mb-0">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control rounded-start-pill" placeholder="Pesquisar autor..." value="{{ request.GET.q }}">
+                            <button type="submit" class="btn btn-outline-light rounded-end-pill">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row mb-5 mt-3">
+    <div class="row mb-5 mt-5">
         {% for autor in autores %}
         <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
             <div class="card h-100 shadow-sm border-0 rounded-4 bg-secondary bg-opacity-25 text-white">
