@@ -142,18 +142,16 @@ class SomenteAdminMixin(UserPassesTestMixin):
 # ----------------------------
 class AutorListView(generic.ListView):
     model = Autor
-    template_name = 'autores/lista.html'  # caminho relativo dentro da pasta templates
+    template_name = 'autores/lista.html'  # ou o nome correto
     context_object_name = 'autores'
-    paginate_by = 12
+    paginate_by = 12  # ou o número que estiver usando
 
     def get_queryset(self):
-        return (
-            Autor.objects.all()
-            .annotate(qtd_livros=Count('livros'))
-            .order_by('nome')
-        )
-
-
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(nome__icontains=q)
+        return queryset
 
 class AutorDetailView(generic.DetailView):
     model = Autor
