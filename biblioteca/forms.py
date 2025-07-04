@@ -4,8 +4,7 @@ from .models import Livro, Autor
 class LivroForm(forms.ModelForm):
     autores = forms.ModelMultipleChoiceField(
         queryset=Autor.objects.all(),
-        widget=forms.CheckboxSelectMultiple,  # pode usar SelectMultiple se preferir dropdown
-        required=True,
+        widget=forms.CheckboxSelectMultiple,
         label='Autores',
         help_text='Selecione um ou mais autores já cadastrados.'
     )

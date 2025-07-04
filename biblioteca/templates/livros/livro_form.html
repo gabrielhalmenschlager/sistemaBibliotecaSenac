@@ -28,16 +28,16 @@
                                 </label>
 
                                 {% if field.name == 'autores' %}
-                                    <div class="bg-dark border border-secondary rounded-3 px-3 py-2" style="max-height: 200px; overflow-y: auto;">
-                                        {% for checkbox in field %}
-                                            <div class="form-check">
-                                                {{ checkbox.tag }}
-                                                <label class="form-check-label text-white ms-2" for="{{ checkbox.id_for_label }}">
-                                                    {{ checkbox.choice_label }}
-                                                </label>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                                <div class="form-check bg-dark border border-secondary rounded-3 px-3 py-2" style="max-height: 200px; overflow-y: auto;">
+                                    {% for subwidget in field.subwidgets %}
+                                        <div class="form-check">
+                                            {{ subwidget.tag }}
+                                            <label class="form-check-label text-white ms-2" for="{{ subwidget.attrs.id }}">
+                                                {{ subwidget.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                                 {% else %}
                                     <div class="form-control bg-dark text-white border border-secondary rounded-3 px-3 py-2">
                                         {{ field }}
