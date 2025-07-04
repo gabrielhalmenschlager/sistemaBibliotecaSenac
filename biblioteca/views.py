@@ -134,7 +134,7 @@ class EmprestimoDevolverView(LoginRequiredMixin, generic.View):
 # ----------------------------
 class SomenteAdminMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.tipo == 'aluno'
+        return self.request.user.is_authenticated and self.request.user.tipo == 'admin'
 
 
 # ----------------------------
