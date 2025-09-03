@@ -1,4 +1,4 @@
-# Biblioteca Virtual <img src="https://raw.githubusercontent.com/seu-usuario/seu-projeto/main/logo.png" alt="Logo" width="50" style="vertical-align: middle;"/>
+# Biblioteca Virtual Senac
 
 ---
 
@@ -43,5 +43,8 @@ O projeto consolida conhecimentos em **Python e Django**, explorando autenticaç
 
 **Controle de Versão:**  
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/)
+
+**Banco de Dados:**  
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
 
 ---
